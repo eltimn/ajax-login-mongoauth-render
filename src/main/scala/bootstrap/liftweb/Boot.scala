@@ -6,6 +6,9 @@ import net.liftweb.http.LiftRulesMocker.toLiftRules
 import net.liftweb.sitemap._
 import net.liftweb.sitemap.Loc._
 import net.liftmodules.JQueryModule
+import net.liftmodules.mongoauth.Locs._
+import net.liftmodules.mongoauth.model.SimpleUser
+import net.liftmodules.mongoauth.MongoAuth
 
 /**
  * A class that's instantiated early and run.  It allows the application
@@ -20,13 +23,15 @@ class Boot {
     // Build SiteMap
     def sitemap = SiteMap(
       Menu.i("Home") / "index", // the simple way to declare a menu
-
+      Menu("user", "User Page") / "user" >> RequireLoggedIn,
       // more complex because this menu allows anything in the
       // /static path to be visible
       Menu(Loc("Static", Link(List("static"), true, "/static/index"),
              "Static Content")))
     LiftRules.setSiteMapFunc(() => sitemap)
 
+    MongoAuth.authUserMeta.default.set(SimpleUser)
+    
     JQueryModule.InitParam.JQuery = JQueryModule.JQuery211
     JQueryModule.init()
 
