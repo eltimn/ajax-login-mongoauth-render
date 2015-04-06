@@ -104,7 +104,7 @@ object MenuX extends DispatchSnippet {
         })
       }
 
-      (S.request.flatMap(_.location), S.attr("param"), SiteMap.findAndTestLoc(name)) match {
+      (S.originalRequest.flatMap(_.location), S.attr("param"), SiteMap.findAndTestLoc(name)) match {
          case (_, Full(param), Full(loc: Loc[T] with ConvertableLoc[T])) => {
           println("mark 1")
            (for {
