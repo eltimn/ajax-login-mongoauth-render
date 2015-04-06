@@ -5,11 +5,14 @@ import net.liftweb.http.SHtml._
 import net.liftmodules.mongoauth.model.SimpleUser
 import net.liftweb.http.js.JsCmds.SetHtml
 
+// jQuery('#'+"menu").html("");
+
 class AjaxLogin {
   def render = {
     "#ajax-login" #> ajaxButton("login", () => {
       SimpleUser.logUserIn(SimpleUser.createRecord, true, false)
-      SetHtml("menu", <div data-lift="Menu.item?name=user">user page</div>)
-      })
+      println("SimpleUser: "+SimpleUser.isLoggedIn)
+      SetHtml("menu", <div data-lift="MenuX.item?name=user">user page</div>)
+    })
   }
 }

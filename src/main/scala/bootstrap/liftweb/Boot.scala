@@ -1,20 +1,27 @@
 package bootstrap.liftweb
 
 import net.liftweb.common.Full
-import net.liftweb.http.LiftRules
+import net.liftweb.http.{LiftRules, RedirectResponse}
 import net.liftweb.http.LiftRulesMocker.toLiftRules
 import net.liftweb.sitemap._
 import net.liftweb.sitemap.Loc._
 import net.liftmodules.JQueryModule
 import net.liftmodules.mongoauth.Locs._
 import net.liftmodules.mongoauth.model.SimpleUser
-import net.liftmodules.mongoauth.MongoAuth
+import net.liftmodules.mongoauth.{Locs, MongoAuth}
 
 /**
  * A class that's instantiated early and run.  It allows the application
  * to modify lift's environment
  */
 class Boot {
+
+  val RequireLoggedIn = If(
+    () => {
+      println("RequireLoggedIn: "+SimpleUser.isLoggedIn)
+      SimpleUser.isLoggedIn
+    },
+    () => RedirectResponse("/index"))
 
   def boot {
 
@@ -27,11 +34,12 @@ class Boot {
       // more complex because this menu allows anything in the
       // /static path to be visible
       Menu(Loc("Static", Link(List("static"), true, "/static/index"),
-             "Static Content")))
+             "Static Content")),
+      Locs.buildLogoutMenu)
     LiftRules.setSiteMapFunc(() => sitemap)
 
     MongoAuth.authUserMeta.default.set(SimpleUser)
-    
+
     JQueryModule.InitParam.JQuery = JQueryModule.JQuery211
     JQueryModule.init()
 
